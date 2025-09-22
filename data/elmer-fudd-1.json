@@ -1,0 +1,13 @@
+{
+  "id" : "elmer-fudd-1",
+  "prename" : "Elmer",
+  "surname" : "Fudd",
+  "tags" : [
+    "humanoid",
+    "male"
+  ],
+  "links" : [
+    "https://looneytunes.fandom.com/wiki/Elmer_Fudd"
+  ]
+}
+

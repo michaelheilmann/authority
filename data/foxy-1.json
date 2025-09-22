@@ -1,0 +1,13 @@
+{
+  "id" : "foxy-1",
+  "prename" : "Foxy",
+  "surname" : "",
+  "tags" : [
+    "fox",
+    "male"
+  ],
+  "links": [
+    "https://looneytunes.fandom.com/wiki/Foxy"
+  ]
+}
+

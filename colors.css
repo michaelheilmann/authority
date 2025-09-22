@@ -1,0 +1,14 @@
+:root {
+  --white : rgb(253, 253, 253);                  /* (255, 255, 255) + (-2, -2, -2) */
+  --light-gray: rgb(209, 209, 209);              /* (211, 211, 211) + (-2, -2, -2) */
+  --dark-gray: rgb(65, 65, 65);                  /* (63, 63, 63) + (+2, +2, +2) */
+  --black : rgb(2, 2, 2);                        /* (0, 0, 0) + (+2, +2, +2) */
+  --lime-green: rgb(50, 205, 50);                /* lime green */
+  --light-grayish-blue: rgb(245, 248, 251);      /* light grayish blue */
+  --dark-slate-blue: DarkBlue;
+
+  --font : Open Sans, Open Sans fallback, Helvetica, Arial, Sans-Serif;
+  
+  /* This is the default margin between elements. */
+  --default-margin: 16px;
+}

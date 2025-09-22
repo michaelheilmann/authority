@@ -1,0 +1,13 @@
+{
+  "id" : "buddy-1",
+  "prename" : "Buddy",
+  "surname" : "",
+  "tags" : [
+    "human",
+    "male"
+  ],
+  "links" : [
+    "https://looneytunes.fandom.com/wiki/Buddy"
+  ]
+}
+

@@ -1,0 +1,13 @@
+{
+  "id" : "cool-cat-1",
+  "prename" : "Cool",
+  "surname" : "Cat",
+  "tags" : [
+    "tiger",
+    "male"
+  ],
+  "linkedin" : [
+    "https://looneytunes.fandom.com/wiki/Cool_Cat"
+  ]
+}
+

@@ -1,0 +1,28 @@
+@import url('colors.css');
+
+/* The "light theme". */
+:root {
+  --font-color : var(--black);
+  --border-color: var(--black);
+  
+  --logo-color: var(--black);
+
+  --button-font-color: var(--white);
+  --button-background-color: var(--dark-slate-blue);
+  --button-border-color: var(--dark-slate-blue);
+
+  --data-table-header-font-color: var(--dark-gray);
+  
+  --data-table-even-row-color: var(--light-grayish-blue);
+  --data-table-odd-row-color: var(--white);
+  --data-table-row-hover-color: var(--light-grayish-blue);
+  
+  --data-table-cell-border-color: var(--light-gray);
+  
+  --data-table-header-row-color: var(--white);
+
+  --data-table-font-color: var(--dark-gray);  
+
+  --background-gradient-start : var(--white);
+  --background-gradient-end : var(--white);
+}

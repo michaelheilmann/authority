@@ -1,0 +1,2 @@
+- determine if mutually exclusivity of cron-jobs via database locks is required
+- extend cron-jobs to support organizations

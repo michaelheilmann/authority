@@ -1,0 +1,13 @@
+{
+  "id" : "charlie-dog-1",
+  "prename" : "Charlie",
+  "surname" : "Dog",
+  "tags" : [
+    "dog",
+    "male"
+  ],
+  "linkedin" : [
+    "https://looneytunes.fandom.com/wiki/Charlie_Dog"
+  ]
+}
+

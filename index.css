@@ -1,0 +1,349 @@
+@import url('reset.css');
+@import url('light.css');
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  color: var(--font-color);
+  font-family: var(--font);
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+body {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.column-1 {
+  flex-grow: 1;
+}
+
+.column-2 {
+  flex-grow: 2;
+}
+
+.column-6 {
+  flex-grow: 6;
+}
+
+.column-8 {
+  flex-grow: 8;
+}
+
+#middle-row {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: row;
+}
+
+/* scroll the table */
+#middle-row > div:nth-child(2) > div {
+  overflow-x: auto;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+body {
+  background: linear-gradient(to bottom, var(--background-gradient-start), var(--background-gradient-end));
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+header {
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: var(--border-color);
+}
+
+header > div:nth-child(2) {
+  flex-grow: 1;
+}
+
+header > #login-dialog {
+  display: none;
+}
+
+header > #login-button {
+  margin-right: var(--default-margin);
+}
+
+header > div.logo a {
+  color: var(--logo-color);
+}
+
+header > div.logo {
+  display: flex;
+  margin-left: var(--default-margin);
+  margin-right: var(--default-margin);
+  font-size: 32px; /*TODO: Do not use px.*/
+  flex-direction: column;
+}
+
+header > div.logo a {
+  text-decoration: none;
+  font-size: 32px; /*TODO: Do not use px.*/
+}
+
+header > div.logo a:visited {
+  text-decoration: none;
+}
+
+header > div.logo a:hover {
+  text-decoration: none;
+}
+
+header > div.logo a:active {
+  text-decoration: none;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+footer {
+  /*opacity: .7;*/
+  display: flex;
+  flex-direction: row;
+  margin-top: var(--default-margin);
+  padding-top: var(--default-margin);
+}
+
+footer > div:nth-child(2) > div:nth-child(2) {
+  margin-left: var(--default-margin);
+}
+
+footer > div:nth-child(2) {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+p {
+  color: #FFF; /*TODO: Use a variable.*/
+  line-height: 1.3
+}
+
+a {
+   color: #FFF;  /*TODO: Use a variable.*/
+}
+
+footer {
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-top-color: var(--border-color);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+table.data-table {
+  border-collapse: collapse;
+  color: var(--data-table-font-color);
+  overflow: auto;
+  table-layout: fixed;
+  width: max(640px, calc(0.60*100vw));
+  margin-left: auto;
+  margin-right: auto;
+}
+
+table.data-table tbody tr:nth-child(odd) {
+  background-color: var(--data-table-odd-row-color);
+}
+
+table.data-table tbody tr:nth-child(even) {
+  background-color: var(--data-table-even-row-color);
+  border-color: var(--data-table-cell-border-color);
+
+  border-width: 1px;
+  border-style: solid;
+  border-left-style: none;
+  border-right-style: none;
+}
+
+table.data-table thead {
+  color: var(--data-table-header-font-color);
+}
+
+table.data-table thead tr th {
+  border-bottom-color: var(--data-table-cell-border-color);
+  border-bottom-width: 2px;
+  border-bottom-style: solid;
+}
+
+table.data-table tbody tr:hover {
+  background-color: var(--data-table-row-hover-color);
+}
+
+table.data-table th {
+  border-style: none;
+}
+
+table.data-table td, table.data-table th {
+  padding: 8px;
+}
+
+table.data-table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: var(--data-table-header-row-color);
+  color: var(--data-table-font-color);
+}
+
+table.data-table thead tr th {
+  color: var(--data-table-header-font-color);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+nav.vertical {
+  display: flex;
+  flex-direction: column;
+}
+
+nav.horizontal {
+  display: flex;
+  flex-direction: row;
+}
+
+/* The following ensures proper distance between elements. */
+nav.vertical > a {
+  margin-top: 16px;
+}
+
+nav.vertical > a:nth-child(1) {
+  margin-top: 0;
+}
+
+nav > a {
+  padding: 16px;
+  text-decoration: none;
+}
+
+nav > button {
+  padding: 16px;
+  text-decoration: none;
+}
+
+nav.vertical > a {
+  padding: 16px;
+}
+
+nav.horizontal > a {
+  padding: 16px;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+nav.pagination.horizontal {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+/* The following ensures proper distance between elements. */
+nav.pagination.horizontal > a {
+  margin-left: 16px;
+}
+nav.pagination.horizontal > a:nth-child(1) {
+  margin-top: 0;
+}
+
+#middle-row > div:nth-child(3) {
+  margin-left: var(--default-margin);
+  margin-right: var(--default-margin);
+  display: flex;
+  flex-direction: column;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+a.button {
+  display: inline-block;
+}
+
+a.button {
+  background-color: var(--button-background-color);
+
+  color: var(--button-font-color);
+
+  border-color: var(--button-border-color);
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 8px;
+}
+
+button {
+  background-color: var(--button-background-color);
+
+  color: var(--button-font-color);
+
+  border-color: var(--button-border-color);
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 8px;
+}
+
+button {     
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  /*cursor: pointer;*/
+  /*width: 100%;*/
+}
+
+nav a {
+  background-color: var(--button-background-color);
+  color: var(--button-color);
+}
+
+@media screen and (max-width: 1024px) {
+  
+  #middle-row {
+    display: flex;
+    flex-direction: column; 
+  }
+  
+  #middle-row > div:nth-child(2) > div {
+    margin-left: var(--default-margin);
+    margin-right: var(--default-margin);
+  }
+  
+  #right-column {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+  
+  #right-column > a {
+    margin: 0px !important;
+  }
+  
+  #right-column > a {
+    margin-left: var(--default-margin) !important;
+  }
+  
+  #right-column > a:nth-child(1) {
+    margin-left: 0px !important;
+  }
+  
+  #middle-row > div:nth-child(2) {
+    order: 2;
+  }
+  
+  #middle-row > div:nth-child(3) {
+    order: 1;
+    margin-top: var(--default-margin);
+  }
+
+}

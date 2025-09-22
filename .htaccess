@@ -1,0 +1,26 @@
+RewriteEngine On
+
+# Deny access to all ".md" and ".txt" files.
+<Files ~ "\.(md|txt)$">
+  Require all denied
+</Files>
+
+# Deny access to all ".htaccess" files.
+<Files ~ "^\.htaccess$">
+  Require all denied
+</Files>
+
+# Remark: We cannot use <Directory> in .htaccess.
+# These rules are actually event better as they hide the existence of the directories by returning 404.
+RewriteRule ^(shared) / [R=404,L,NC]
+RewriteRule ^(frontend) / [R=404,L,NC]
+RewriteRule ^(backend) / [R=404,L,NC]
+RewriteRule ^(data) / [R=404,L,NC]
+RewriteRule ^(test) / [R=404,L,NC]
+RewriteRule ^(cron) / [R=404,L,NC]
+
+# any path api/<path> gets rewritten to api/index.php?request=<path>
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule api/(.*)$ api/index.php?request=$1 [QSA,NC,L]
+

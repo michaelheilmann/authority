@@ -1,0 +1,11 @@
+{
+  "id" : "buster-bunny-1",
+  "prename" : "Buster",
+  "surname" : "Bunny",
+  "tags" : [
+    "rabbit"
+  ],
+  "links" : [
+    "https://looneytunes.fandom.com/wiki/Buster_Bunny"
+  ]
+}

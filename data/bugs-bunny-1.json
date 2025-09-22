@@ -1,0 +1,14 @@
+{
+  "id" : "bugs-bunny-1",
+  "prename" : "Bugs",
+  "surname" : "Bunny",
+  "tags" : [
+    "hare",
+    "rabbit",
+    "male"
+  ],
+  "links" : [
+    "https://looneytunes.fandom.com/wiki/Bugs_Bunny"
+  ]
+}
+
