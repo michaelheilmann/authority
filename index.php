@@ -27,9 +27,82 @@ require_once(__DIR__ . '/frontend/' . "include.php");
   <link rel="stylesheet" href="index.css?v=1" />
   <style>
 
+  /* modal overlay */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--model-overlay-color);
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* modal */
+  .modal-content {
+    background-color: #fefefe;
+    margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+   
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--light-gray);
+    border-radius: 10px;
+   
+    padding: 10px;
+  }
+ 
+  .modal-content {
+    background: white;
+    width: 24rem;
+    padding: 0.5rem;
+    border-radius: 10px;
+    position: relative;
+  }
+  
+  /* Form */
+  .modal-content h2 {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  #login-dialog label, #login-dialog input, #login-dialog button {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  #login-dialog > form > div {
+    display: flex;
+    flex-direction: column
+  }
+  
+  #login-dialog input {
+    padding: 10px;
+      
+    border-radius: 6px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #ccc;
+  }
 
+  #login-dialog button {
+    padding: 12px;
+    margin: 8px 0;
+    background: var(--button-background-color);
+    border: none;
+    color: white;
+    
+    border-radius: 6px;
+    
+    cursor: pointer;
+  }
 
-  </style>
+  #login-dialog button:hover {
+    background: var(--button-background-color-hover);
+  }
+  
+  </style>  
   </head>
   <body>
     <header>
@@ -52,7 +125,7 @@ require_once(__DIR__ . '/frontend/' . "include.php");
         <a href="<?php echo AUTHORITY_WS_URL; ?>"><?php echo AUTHORITY_WS_TITLE;?></a>
       </div>
       <div></div>
-      <button id="login-button" onclick="document.getElementById('login-dialog').style.display='block'"">Login</button>
+      <button id="login-button" onclick="document.getElementById('login-dialog').style.display='block'">Login</button>
     </header>
     <main id="middle-row">
       <div class="column-2">
@@ -132,8 +205,20 @@ require_once(__DIR__ . '/frontend/' . "include.php");
       </div>
       <div class="column-1"></div>
     </footer>
-    <div id="login-dialog">
+    <div id="login-dialog" class="modal-overlay">
         <form class="modal-content animate" action="/login.php" method="post">
+          <h2>Login</h2>
+          <div>
+              <label for="username">Username:</label>
+              <input type="text" name="username" id="username">
+          </div>
+          <div>
+              <label for="password">Password:</label>
+              <input type="password" name="password" id="password">
+          </div>
+          <section>
+              <button type="submit">Login</button>
+          </section>
         </form>
     </div>
   </body>

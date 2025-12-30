@@ -8,7 +8,10 @@
   --logo-color: var(--black);
 
   --button-font-color: var(--white);
+  
   --button-background-color: var(--dark-slate-blue);
+  --button-background-color-hover: color-mix(in oklab, var(--dark-slate-blue), white 30%);
+  
   --button-border-color: var(--dark-slate-blue);
 
   --data-table-header-font-color: var(--dark-gray);
@@ -25,4 +28,6 @@
 
   --background-gradient-start : var(--white);
   --background-gradient-end : var(--white);
+  
+  --model-overlay-color: rgba(0, 0, 0, 0.6);
 }
