@@ -81,12 +81,12 @@ class PersonsHandler extends Handler {
         throw new HTTPInternalErrorException($context);
       }
     }
-    $rows = mysqli_query($this->mysqli, "SELECT COUNT(*) as `numberOfPersons` FROM `persons`");
+    $rows = mysqli_query($this->mysqli, "SELECT COUNT(*) as `numberOfElements` FROM `persons`");
     if ($rows === false) {
       throw new HTTPInternalErrorException($context);   
     }
     $row = mysqli_fetch_assoc($rows);
-    return toInt($row['numberOfPersons']);
+    return toInt($row['numberOfElements']);
   }
 
   /**

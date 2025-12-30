@@ -68,6 +68,8 @@ function handleRequest() {
         continue;
       }
     }
+    http_response_code(HTTPStatusCodes::BAD_REQUEST);
+    echo json_encode(array());
   } catch (HTTPInternalErrorException $e) {
     http_response_code(HTTPStatusCodes::OK);
     echo json_encode(array());

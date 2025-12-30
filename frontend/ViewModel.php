@@ -68,13 +68,18 @@ class ViewModel {
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     $result = curl_exec($curl);
-    $result = json_decode($result, true);
+    $httpStatusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     curl_close($curl);
-    return $result['numberOfElements'];
+    if ($result === false || $httpStatusCode !== 200) {
+      return null;  
+    } else {
+      $result = json_decode($result, true);
+      return $result['numberOfElements'];
+    }
   }
   
   // @brief Get the number of organizations.
-  // @return The number of organizations.
+  // @return The number of organizations on success. null on failure.
   function getNumberOfOrganizations() {
     $p1 = AUTHORITY_API_URL . '/organizations/';
     $p2 = array("index" => 0, "count" => 0);
@@ -83,16 +88,22 @@ class ViewModel {
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     $result = curl_exec($curl);
-    $result = json_decode($result, true);
+    $httpStatusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     curl_close($curl);
-    return $result['numberOfElements'];
+    if ($result === false || $httpStatusCode !== 200) {
+      return null;
+    } else {
+      $result = json_decode($result, true);
+      return $result['numberOfElements'];
+    }
   }
 
   // @brief Get the persons [page, page * personsPerPage], page >= 0.
   // @param $page The page.
   // @param $personsPerPage The number of persons per page.
-  // @return { 'numberOfElements' : <the number of elements>, 'elements' : <the elements>}
-  // where each element is of type <person>
+  // @return
+  // { 'numberOfElements' : <the number of elements>, 'elements' : <the elements>} where each element is of type <person> on success.
+  // null on failure.
   function getPersons($activePage, $personsPerPage) {
     $p1 = AUTHORITY_API_URL . '/persons/';
     $p2 = array("index" => ($activePage-1)*$personsPerPage, "count" => $personsPerPage);
@@ -101,14 +112,21 @@ class ViewModel {
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     $result = curl_exec($curl);
-    $result = json_decode($result, true);
+    $httpStatusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     curl_close($curl);
-    return $result;
+    if ($result === false || $httpStatusCode !== 200) {
+      return null;
+    } else {
+      $result = json_decode($result, true);
+      return $result;
+    }
   }
 
   // @brief Get the tags of a person.
   // @param $id The ID of the person.
-  // @return List of tags of the person.
+  // @return
+  // List of tags of the person.
+  // null on failure.
   function getPersonTags($id) {
     $p1 = AUTHORITY_API_URL . '/persons/' . $id . '/tags';
     $p2 = array();
@@ -117,16 +135,22 @@ class ViewModel {
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     $result = curl_exec($curl);
-    $result = json_decode($result, true);
+    $httpStatusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     curl_close($curl);
-    return $result; 
+    if ($result === false || $httpStatusCode !== 200) {
+      return null;
+    } else {
+      $result = json_decode($result, true);
+      return $result;
+    }
   }
 
   // @brief Get the organizations [page, page * organizationsPerPage], page >= 0.
   // @param $page The page.
   // @param $organizationsPerPage The number of persons per page.
-  // @return { 'numberOfElements' : <the number of elements>, 'elements' : <the elements>}
-  // where each element is of type <organization>
+  // @return
+  // { 'numberOfElements' : <the number of elements>, 'elements' : <the elements>}  where each element is of type <organization> on success.
+  // null on failure.
   function getOrganizations($activePage, $organizationsPerPage) {
     $p1 = AUTHORITY_API_URL . '/organizations/';
     $p2 = array("index" => ($activePage-1)*$organizationsPerPage, "count" => $organizationsPerPage);
@@ -135,9 +159,14 @@ class ViewModel {
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     $result = curl_exec($curl);
-    $result = json_decode($result, true);
+    $httpStatusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     curl_close($curl);
-    return $result;
+    if ($result === false || $httpStatusCode !== 200) {
+      return null;
+    } else {
+      $result = json_decode($result, true);
+      return $result;
+    }
   }
 
 };

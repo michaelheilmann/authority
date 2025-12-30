@@ -60,42 +60,48 @@ require_once(__DIR__ . '/frontend/' . "include.php");
       <div class="column-6">
       <?php
       if ($activeCategory == 'organizations') {
-        $result = $viewModel->getOrganizations($activePage, $itemsPerPage)['elements'];
+        $result = $viewModel->getOrganizations($activePage, $itemsPerPage);
+        $result = $result !== null ? $result['elements'] : $result;
       } else {
-        $result = $viewModel->getPersons($activePage, $itemsPerPage)['elements'];
+        $result = $viewModel->getPersons($activePage, $itemsPerPage);
+        $result = $result !== null ? $result['elements'] : $result;
       }
       echo '<div class="row-9">';
         echo '<table class="data-table">';
         if ($activeCategory == 'organizations') {
           echo '<thead><tr><th>Name</th><th>Tags</th></tr></thead>';
-          foreach ($result as $organization) {
-            echo '<tr>';
-            echo '<td>' . $organization['name'] . '</td>';
-            $tags = $viewModel->getOrganizationTags($organization['unique-id']);
-            if (IsMyError($tags)) {
-              echo '<td>failed to load tags' . $tags->asJson() . '</td>';
-            } else {
-              echo '<td>';
-              echo implode(', ', array_map(function($tag) { return $tag['name']; }, $tags));
-              echo '</td>';
+          if ($result !== null) {
+            foreach ($result as $organization) {
+              echo '<tr>';
+              echo '<td>' . $organization['name'] . '</td>';
+              $tags = $viewModel->getOrganizationTags($organization['unique-id']);
+              if (IsMyError($tags)) {
+                echo '<td>failed to load tags' . $tags->asJson() . '</td>';
+              } else {
+                echo '<td>';
+                echo implode(', ', array_map(function($tag) { return $tag['name']; }, $tags));
+                echo '</td>';
+              }
+              echo '</tr>';
             }
-            echo '</tr>';   
           }          
         } else {
           echo '<thead><tr><th>Prename</th><th>Surname</th><th>Tags</th></tr></thead>';
-          foreach ($result as $person) {
-            echo '<tr>';
-            echo '<td>' . $person['prename'] . '</td>';
-            echo '<td>' . $person['surname'] . '</td>';
-            $tags = $viewModel->getPersonTags($person['unique-id']);
-            if (IsMyError($tags)) {
-              echo '<td>failed to load tags' . $tags->asJson() . '</td>';
-            } else {
-              echo '<td>';
-              echo implode(', ', array_map(function($tag) { return $tag['name']; }, $tags));
-              echo '</td>';
+          if ($result !== null) {
+            foreach ($result as $person) {
+              echo '<tr>';
+              echo '<td>' . $person['prename'] . '</td>';
+              echo '<td>' . $person['surname'] . '</td>';
+              $tags = $viewModel->getPersonTags($person['unique-id']);
+              if (IsMyError($tags)) {
+                echo '<td>failed to load tags' . $tags->asJson() . '</td>';
+              } else {
+                echo '<td>';
+                echo implode(', ', array_map(function($tag) { return $tag['name']; }, $tags));
+                echo '</td>';
+              }
+              echo '</tr>';   
             }
-            echo '</tr>';   
           }
         }
         echo '</table>';

@@ -52,12 +52,12 @@ class OrganizationsHandler extends Handler {
         throw new HTTPInternalErrorException($context);
       }
     }
-    $rows = mysqli_query($this->mysqli, "SELECT COUNT(*) as `numberOfOrganizations` FROM `organizations`");
+    $rows = mysqli_query($this->mysqli, "SELECT COUNT(*) as `numberOfElements` FROM `organizations`");
     if ($rows === false) {
       throw new HTTPInternalErrorException($context);   
     }
     $row = mysqli_fetch_assoc($rows);
-    return toInt($row['numberOfOrganizations']);
+    return toInt($row['numberOfElements']);
   }
 
   /**
