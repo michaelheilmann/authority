@@ -10,7 +10,7 @@ class PersonsHandler extends Handler {
   protected $mysqli;
 
   /**
-   * @brief Construct this gateway.
+   * @brief Construct this handler.
    */
   public function __construct() {
     $this->mysqli = null;
