@@ -253,7 +253,7 @@ require_once(__DIR__ . '/frontend/' . "include.php");
               <button type="submit">Login</button>
           </section>
           <section>
-          Not registered? <a style="color: green" href="/register.php">Sign-up here</a>
+          Not registered? <a style="color: green" href="/register.php">Register here</a>
           </section>
         </form>
     </div>
