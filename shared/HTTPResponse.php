@@ -1,6 +1,6 @@
 <?php
 
-require_once(__DIR__ . '/' . 'HTTPStatusCodes.php');
+require_once(__DIR__ . '/' . 'HTTPStatusCode.php');
 require_once(__DIR__ . '/' . 'JSONData.php');
 
 /**
@@ -8,7 +8,7 @@ require_once(__DIR__ . '/' . 'JSONData.php');
  */
 class HTTPResponse {
   /** @brief The HTTP status code. */
-  public HTTPStatusCodes $statusCode;
+  public HTTPStatusCode $statusCode;
 
   /** @brief The data of the response or null. */
   public JSONData $data;
@@ -18,12 +18,12 @@ class HTTPResponse {
    * @param $statusCode The HTTP status code.
    * @param $data The data or null.
    */
-  public function __construct(HTTPStatusCodes $statusCode, JSONData $data) {
+  public function __construct(HTTPStatusCode $statusCode, JSONData $data) {
     $this->statusCode = $statusCode;
     $this->data = $data;
   }
 
-  public function getStatusCode() : HTTPStatusCodes {
+  public function getStatusCode() : HTTPStatusCode {
     return $this->statusCode;
   }
 

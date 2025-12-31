@@ -10,9 +10,9 @@ abstract class Handler {
    * @param $requestPathParts Array of request path parts.
    * @param $requestMethod The request method.
    * @param $arguments The arguments.
-   * @return JSON on success. null if no dispatch. exception on failure during dispatch.
+   * @return HTTPResponse. null if no dispatch.
    */
-  abstract public function dispatch(HTTPRequestContext $context, $requestPathParts, HTTPRequestMethod $requestMethod, $arguments) : JSONData|null;
+  abstract public function dispatch(HTTPRequestContext $context, $requestPathParts, HTTPRequestMethod $requestMethod, $arguments) : HTTPResponse|null;
   
 }; // class Handler
 

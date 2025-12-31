@@ -17,20 +17,42 @@ class PersonsHandler extends Handler {
   }
   
   /**
-   * @brief Get the node ID of a node given its unique ID.
+   * @brief Get the number of persons.
+   * @param $context The context.
+   * @return The number of persons (non-negative int) on success, null on failure
+   */
+  private function getCount(HTTPRequestContext $context) {
+    if ($this->mysqli === null) {
+      $this->mysqli = new mysqli(AUTHORITY_DB_HOST, AUTHORITY_DB_USER_NAME, AUTHORITY_DB_USER_PASSWORD, AUTHORITY_DB_NAME, AUTHORITY_DB_PORT, AUTHORITY_DB_SOCKET);
+      if ($this->mysqli->connect_errno) {
+        return null;
+      }
+    }
+    $rows = mysqli_query($this->mysqli, "SELECT COUNT(*) as `numberOfElements` FROM `persons`");
+    if ($rows === false) {
+      return null; 
+    }
+    $row = mysqli_fetch_assoc($rows);
+    return toInt($row['numberOfElements']);
+  }
+  
+  /**
+   * @brief Get the database ID of a node given its unique ID.
    * @param $uniqueID The unique ID of the node.
-   * @return The node ID or null.
+   * @return The node database ID or null.
    */
   private function getNodeID(HTTPRequestContext $context, $uniqueID) {
     if ($this->mysqli === null) {
       $this->mysqli = new mysqli(AUTHORITY_DB_HOST, AUTHORITY_DB_USER_NAME, AUTHORITY_DB_USER_PASSWORD, AUTHORITY_DB_NAME, AUTHORITY_DB_PORT, AUTHORITY_DB_SOCKET);
       if ($this->mysqli->connect_errno) {
-        throw new HTTPInternalErrorException($context);
+        /* database failure or inconsistencies yield 500 / internal server error */
+        return new HTTPResponse(HTTPStatusCode::INTERNAL_ERROR, JSONData::encode(array()));
       }
     }
     $rows = mysqli_query($this->mysqli, "SELECT `id` FROM `nodes` WHERE `nodes`.`unique-id`='" . $uniqueID . "'");
     if ($rows === false) {
-      return null;
+      /* database failure or inconsistencies yield 500 / internal server error */
+      return new HTTPResponse(HTTPStatusCode::NOT_FOUND, JSONData::encode(array()));
     }
     $row = mysqli_fetch_assoc($rows);
     if ($row !== null) {
@@ -46,144 +68,138 @@ class PersonsHandler extends Handler {
    * @param $uniqueID The unique ID of the node.
    * @return The tags of the node.
    */
-  public function getTags(HTTPRequestContext $context, $uniqueID) : JSONData|null {
+  public function getTags(HTTPRequestContext $context, $uniqueID) : HTTPResponse|null {
     if ($this->mysqli === null) {
       $this->mysqli = new mysqli(AUTHORITY_DB_HOST, AUTHORITY_DB_USER_NAME, AUTHORITY_DB_USER_PASSWORD, AUTHORITY_DB_NAME, AUTHORITY_DB_PORT, AUTHORITY_DB_SOCKET);
       if ($this->mysqli->connect_errno) {
-        throw new HTTPInternalErrorException($context);
+        /* database failure or inconsistencies yield 500 / internal server error */
+        return new HTTPResponse(HTTPStatusCode::INTERNAL_ERROR, JSONData::encode(array()));
       }
     }
     $nodeID = $this->getNodeID($context, $uniqueID);
     if ($nodeID === null) {
-      throw new HTTPBadRequestException($context); // TODO: Should be "404 Not Found".
+      /* entity not found yields 404 / not found */
+      return new HTTPResponse(HTTPStatuscode::NOT_FOUND, JSONData::encode(array()));
     }
-    $rows = mysqli_query($this->mysqli, "SELECT * FROM `tags_nodes` as lhs LEFT JOIN `tags` as rhs on lhs.`tag-id` = rhs.id WHERE lhs.`node-id`='" . $nodeID . "'");
+    $rows = mysqli_query($this->mysqli, "SELECT * FROM `tags-nodes` as lhs LEFT JOIN `tags` as rhs on lhs.`tag-id` = rhs.id WHERE lhs.`node-id`='" . $nodeID . "'");
     if ($rows === false) {
-      throw new HTTPInternalErrorException($context); 
+      /* database failure or inconsistencies yield 500 / internal server error */
+      return new HTTPResponse(HTTPStatusCode::INTERNAL_ERROR, JSONData::encode(array()));
     }
     $tags = array();
     while ($row = mysqli_fetch_assoc($rows)) {
-      $tag = array('id' => $row['id'], 'node-id' => $row['node-id'], 'tag-id' => $row['tag-id'], 'name' => $row['name']);
+      $tag = array('node-id' => $row['node-id'], 'tag-id' => $row['tag-id'], 'name' => $row['name']);
       $tags[] = $tag;
     }
-    return JSONData::encode($tags);   
-  }
-
-  /**
-   * @brief Get the number of organizations.
-   * @return The number of organizations.
-   * @throw HTTPInternalErrorException unable to open database connection
-   */
-  private function getCount(HTTPRequestContext $context) {
-    if ($this->mysqli === null) {
-      $this->mysqli = new mysqli(AUTHORITY_DB_HOST, AUTHORITY_DB_USER_NAME, AUTHORITY_DB_USER_PASSWORD, AUTHORITY_DB_NAME, AUTHORITY_DB_PORT, AUTHORITY_DB_SOCKET);
-      if ($this->mysqli->connect_errno) {
-        throw new HTTPInternalErrorException($context);
-      }
-    }
-    $rows = mysqli_query($this->mysqli, "SELECT COUNT(*) as `numberOfElements` FROM `persons`");
-    if ($rows === false) {
-      throw new HTTPInternalErrorException($context);   
-    }
-    $row = mysqli_fetch_assoc($rows);
-    return toInt($row['numberOfElements']);
+    return new HTTPResponse(HTTPStatusCode::OK, JSONData::encode($tags));   
   }
 
   /**
    * @brief Get all persons.
-   * @return All persons.
-   * @throw ApiException
+   * @return 
+   * 200 status code: data of HTTP result object is the array of persons
+   * non-200 status code: data of HTTP result object is the empty array
+   * @todo Remove the database ID from the return data.
    */
-  public function findAll(HTTPRequestContext $context, $index, $count) : JSONData|null {
+  public function findAll(HTTPRequestContext $context, $index, $count) : HTTPResponse|null {
     if (!is_int($index) || !is_int($count)) {
-      throw new HTTPBadRequestException($context);
+      /* invalid argument values yield 400 / bad request */
+      return new HTTPResponse(HTTPStatusCode::BAD_REQUEST, JSONData::encode(array()));
     }
     if ($index < 0 || $count < 0) {
-      throw new HTTPBadRequestException($context);
+      /* invalid argument values yield 400 / bad request */
+      return new HTTPResponse(HTTPStatusCode::BAD_REQUEST, JSONData::encode(array()));
     }
     if ($this->mysqli === null) {
       $this->mysqli = new mysqli(AUTHORITY_DB_HOST, AUTHORITY_DB_USER_NAME, AUTHORITY_DB_USER_PASSWORD, AUTHORITY_DB_NAME, AUTHORITY_DB_PORT, AUTHORITY_DB_SOCKET);
       if ($this->mysqli->connect_errno) {
-        throw new HTTPInternalErrorException($context);
+        /* database failure or inconsistencies yield 500 / internal server error */
+        return new HTTPResponse(HTTPStatusCode::INTERNAL_ERROR, JSONData::encode(array()));
       }
     }
-    try {
-      $rows = mysqli_query($this->mysqli, "SELECT * FROM `persons` INNER JOIN `nodes` ON `persons`.`node-id` = `nodes`.`id`"
-                                          . " " . "ORDER BY `persons`.`surname`, `persons`.`prename` LIMIT " . $index . ", " . $count);
-      if ($rows === false) {
-        throw new HTTPBadRequestException($context);
-      }
-      $persons = array();
-      while ($row = mysqli_fetch_assoc($rows)) {
-        $person = array('id' => $row['id'], 'unique-id' => $row['unique-id'], 'prename' => $row['prename'], 'surname' => $row['surname']);
-        $persons[] = $person;
-      }
-      $response = array('numberOfElements' => $this->getCount($context), 'elements' => $persons);
-      return JSONData::encode($response);
-    } catch (HTTPException $e) {
-      throw $e;
-    } catch (Exception $e) {
-      throw new HTTPInternalErrorException($context);
+    $rows = mysqli_query($this->mysqli, "SELECT * FROM `persons` INNER JOIN `nodes` ON `persons`.`node-id` = `nodes`.`id`"
+                                        . " " . "ORDER BY `persons`.`surname`, `persons`.`prename` LIMIT " . $index . ", " . $count);
+    if ($rows === false) {
+      /* database failure or inconsistencies yield 500 / internal server error */
+      return new HTTPResponse(HTTPStatusCode::INTERNAL_ERROR, JSONData::encode(array()));
     }
+    $persons = array();
+    while ($row = mysqli_fetch_assoc($rows)) {
+      $person = array('id' => $row['id'], 'unique-id' => $row['unique-id'], 'prename' => $row['prename'], 'surname' => $row['surname']);
+      $persons[] = $person;
+    }
+    $response = array('numberOfElements' => $this->getCount($context), 'elements' => $persons);
+    return new HTTPResponse(HTTPStatusCode::OK, JSONData::encode($response));
   }
 
   /**
-   * @brief Get the person of the specified ID.
-   * @param $uniqueId The unique ID.
-   * @return The person of the specified ID if it exists. null otherwise
-   * @throw ApiException
+   * @brief Get the person of the specified unique ID.
+   * @param $uniqueID The unique ID.
+   * @return
+   * - if the person was found: HTTPResponse with status code "ok", the data of the person
+   * - if the person was not found: HTTPResponse with status code "not found", empty array as data
+   * - if any other error occurs: HTTPResponse with some status code, empty array as data
+   * @todo Remove the database ID from the return data.
    */
-  public function find(HTTPRequestContext $context, $uniqueID) : JSONData|null {
+  public function find(HTTPRequestContext $context, $uniqueID) : HTTPResponse|null {
    if ($this->mysqli === null) {
      $this->mysqli = new mysqli(AUTHORITY_DB_HOST, AUTHORITY_DB_USER_NAME, AUTHORITY_DB_USER_PASSWORD, AUTHORITY_DB_NAME, AUTHORITY_DB_PORT, AUTHORITY_DB_SOCKET);
      if ($this->mysqli->connect_errno) {
-       throw new HTTPInternalErrorException($context);
+        /* database failure or inconsistencies yield 500 / internal server error */
+        return new HTTPResponse(HTTPStatusCode::INTERNAL_ERROR, JSONData::encode(array()));
      }
    }
    $rows = mysqli_query($this->mysqli, "SELECT * FROM FROM `persons` INNER JOIN `nodes` ON `persons`.`node-id` = `nodes`.`id`"
                                        . " " . "WHERE `persons`.`unique-id`='" . $this->mysqli->real_escape_string($uniqueID) . "'");
    if ($rows === false || $rows->num_rows > 1) {
-     throw new HTTPBadRequestException($context);
+     /* database failure or inconsistencies yield 500 / internal server error */
+     return new HTTPResponse(HTTPStatusCode::INTERNAL_ERROR, JSONData::encode(array()));
    }
    if ($rows->num_rows == 0) {
-     return null;
+     /* entity not found yields 404 / not found */
+     return new HTTPResponse(HTTPStatuscode::NOT_FOUND, JSONData::encode(array()));
    }
    $row = mysqli_fetch_assoc($rows);
-   $person = array('id' => $row['id'], 'unique-id' => $row['unique-id'], 'prename' => $row['prename'], 'surname' => $row['surname']);
-   return JSONData::encode($person);
+   $result = array('id' => $row['id'], 'unique-id' => $row['unique-id'], 'prename' => $row['prename'], 'surname' => $row['surname']);
+   return new HTTPResponse(HTTPStatusCode::OK, JSONData::encode($result));
   }
 
   /**@override*/
-  public function dispatch(HTTPRequestContext $context, $requestPathParts, HTTPRequestMethod $requestMethod, $arguments) : JSONData|null {
-    if ($requestMethod !== HTTPRequestMethod::Get) {
+  public function dispatch(HTTPRequestContext $context, $requestPathParts, HTTPRequestMethod $requestMethod, $arguments) : HTTPResponse|null {
+    try {
+      if ($requestMethod !== HTTPRequestMethod::Get) {
+        return null;
+      }
+      // persons
+      if (count($requestPathParts) == 1) {
+        if ($requestPathParts[0] == 'persons') {      
+          $numberOfArguments = count($arguments);
+          if ($numberOfArguments == 0) {
+            return $this->findAll($context, 0, $this->getCount($context));
+          } else if (isset($arguments['index']) && isset($arguments['count']) && $numberOfArguments == 2) {
+            return $this->findAll($context, toInt($arguments['index']), toInt($arguments['count']));
+          }
+        } 
+      } else if (count($requestPathParts) == 2) {
+        if ($requestPathParts[0] == 'persons') {      
+          $numberOfArguments = count($arguments);
+          if ($numberOfArguments == 0) {
+            return $this->find($context, $requestPathParts[1]);
+          }
+        } 
+      } else if (count($requestPathParts) == 3) {
+        if ($requestPathParts[0] == 'persons' && $requestPathParts[2] == 'tags') {      
+          $numberOfArguments = count($arguments);
+          if ($numberOfArguments == 0) {
+            return $this->getTags($context, $requestPathParts[1]);
+          }
+        } 
+      }
       return null;
+    } catch (Exception $e) {
+     /* exceptions yield 500 / internal server error */
+     return new HTTPResponse(HTTPStatusCode::INTERNAL_ERROR, JSONData::encode(array()));
     }
-    // persons
-    if (count($requestPathParts) == 1) {
-      if ($requestPathParts[0] == 'persons') {      
-        $numberOfArguments = count($arguments);
-        if ($numberOfArguments == 0) {
-          return $this->findAll($context, 0, $this->getCount($context));
-        } else if (isset($arguments['index']) && isset($arguments['count']) && $numberOfArguments == 2) {
-          return $this->findAll($context, toInt($arguments['index']), toInt($arguments['count']));
-        }
-      } 
-    } else if (count($requestPathParts) == 2) {
-      if ($requestPathParts[0] == 'persons') {      
-        $numberOfArguments = count($arguments);
-        if ($numberOfArguments == 0) {
-          return $this->find($context, $requestPathParts[1]);
-        }
-      } 
-    } else if (count($requestPathParts) == 3) {
-      if ($requestPathParts[0] == 'persons' && $requestPathParts[2] == 'tags') {      
-        $numberOfArguments = count($arguments);
-        if ($numberOfArguments == 0) {
-          return $this->getTags($context, $requestPathParts[1]);
-        }
-      } 
-    }
-    return null;
   }
 
 } // class PersonsHandler

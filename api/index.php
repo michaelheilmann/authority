@@ -60,16 +60,39 @@ function handleRequest() {
   $handlers[] = new OrganizationsHandler();
   try {
     foreach ($handlers as $handler) {
-      $json = $handler->dispatch($context, $context->requestPath, $context->requestMethod, $context->requestArguments);
-      if ($json !== null) {
-        echo $json->getData();
+      $response = $handler->dispatch($context, $context->requestPath, $context->requestMethod, $context->requestArguments);
+      if ($response !== null) {
+        switch ($response->getStatusCode()) {
+          case HTTPStatusCode::OK: {
+            http_response_code(200);
+            echo $response->getData()->getData();
+          } break;
+          case HTTPStatusCode::INTERNAL_ERROR: {
+            http_response_code(500);
+            echo json_encode(array());
+          } break;
+          case HTTPStatusCode::BAD_REQUEST: {
+            http_response_code(400);
+            echo json_encode(array());
+          } break;
+          case HTTPStatusCode::UNAUTHORIZED: {
+            http_response_code(401);
+            echo json_encode(array());
+          } break;
+          case HTTPStatusCode::NOT_FOUND: {
+            http_response_code(404);
+            echo json_encode(array());
+          } break;            
+          default: {
+            http_response_code(500);
+            echo json_encode(array());
+          } break;
+        }
         return;
       } else {
         continue;
       }
     }
-    http_response_code(HTTPStatusCodes::BAD_REQUEST);
-    echo json_encode(array());
   } catch (HTTPInternalErrorException $e) {
     http_response_code(HTTPStatusCodes::OK);
     echo json_encode(array());
