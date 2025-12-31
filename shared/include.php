@@ -13,5 +13,8 @@ require_once(__DIR__ . '/' . 'HTTPException.php');
 require_once(__DIR__ . '/' . 'HTTPBadRequestException.php');
 require_once(__DIR__ . '/' . 'HTTPInternalErrorException.php');
 
+require_once(__DIR__ . '/' . 'HTTPResponse.php');
+
+require_once(__DIR__ . '/' . 'JSONData.php');
 ?>
 

@@ -62,7 +62,7 @@ function handleRequest() {
     foreach ($handlers as $handler) {
       $json = $handler->dispatch($context, $context->requestPath, $context->requestMethod, $context->requestArguments);
       if ($json !== null) {
-        echo json_encode($json, JSON_UNESCAPED_SLASHES);
+        echo $json->getData();
         return;
       } else {
         continue;

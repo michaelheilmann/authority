@@ -21,7 +21,7 @@ class OrganizationsHandler extends Handler {
    * @param $id The unique ID of the organization.
    * @return The tags of the organization.
    */
-  public function getTags($context, $id) {
+  public function getTags($context, $id) : JSONData|null {
     if ($this->mysqli === null) {
       $this->mysqli = new mysqli(AUTHORITY_DB_HOST, AUTHORITY_DB_USER_NAME, AUTHORITY_DB_USER_PASSWORD, AUTHORITY_DB_NAME, AUTHORITY_DB_PORT, AUTHORITY_DB_SOCKET);
       if ($this->mysqli->connect_errno) {
@@ -37,7 +37,7 @@ class OrganizationsHandler extends Handler {
       $tag = array('id' => $row['id'], 'person_id' => $row['person_id'], 'tag_id' => $row['tag_id'], 'name' => $row['name']);
       $tags[] = $tag;
     }
-    return $tags;   
+    return JSONData::encode($tags);   
   }
 
   /**
@@ -45,7 +45,7 @@ class OrganizationsHandler extends Handler {
    * @return The number of persons.
    * @throw ApiException
    */
-  public function getCount($context) {
+  private function getCount($context) {
     if ($this->mysqli === null) {
       $this->mysqli = new mysqli(AUTHORITY_DB_HOST, AUTHORITY_DB_USER_NAME, AUTHORITY_DB_USER_PASSWORD, AUTHORITY_DB_NAME, AUTHORITY_DB_PORT, AUTHORITY_DB_SOCKET);
       if ($this->mysqli->connect_errno) {
@@ -65,7 +65,7 @@ class OrganizationsHandler extends Handler {
    * @return All persons.
    * @throw ApiException
    */
-  public function findAll($context, $index, $count) {
+  public function findAll($context, $index, $count) : JSONData|null {
     if (!is_int($index) || !is_int($count)) {
       throw new HTTPBadRequestException($context);
     }
@@ -89,7 +89,7 @@ class OrganizationsHandler extends Handler {
         $persons[] = $person;
       }
       $response = array('numberOfElements' => $this->getCount($context), 'elements' => $persons);
-      return $response;
+      return JSONData::encode($response);
     } catch (HTTPException $e) {
       throw $e;
     } catch (Exception $e) {
@@ -103,7 +103,7 @@ class OrganizationsHandler extends Handler {
    * @return The organization of the specified ID if it exists. null otherwise
    * @throw ApiException
    */
-  public function find($context, $id) {
+  public function find($context, $id) : JSONData|null {
    if ($this->mysqli === null) {
      $this->mysqli = new mysqli(AUTHORITY_DB_HOST, AUTHORITY_DB_USER_NAME, AUTHORITY_DB_USER_PASSWORD, AUTHORITY_DB_NAME, AUTHORITY_DB_PORT, AUTHORITY_DB_SOCKET);
      if ($this->mysqli->connect_errno) {
@@ -119,12 +119,11 @@ class OrganizationsHandler extends Handler {
    }
    $row = mysqli_fetch_assoc($rows);
    $organization = array('id' => $row['id'], 'unique-id' => $row['unique-id'], 'name' => $row['name']);
-   return $organization;
+   return JSONData::encode($organization);
   }
 
-  // @param $requestPathParts 
-  // return json on success. null if no dispatch. exception on failure during dispatch.
-  public function dispatch($context, $requestPathParts, $requestMethod, $arguments) {
+  /**@override*/
+  public function dispatch(HTTPRequestContext $context, $requestPathParts, HTTPRequestMethod $requestMethod, $arguments) : JSONData|null {
     if ($requestMethod !== HTTPRequestMethod::Get) {
       return null;
     }

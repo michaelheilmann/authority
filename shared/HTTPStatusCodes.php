@@ -1,10 +1,14 @@
 <?php
 
-class HTTPStatusCodes {
-  const OK = 200;
-  const INTERNAL_ERROR = 500;
-  const BAD_REQUEST = 400;
-  const UNAUTHORIZED = 401;
+enum HTTPStatusCodes {
+  /* 200 / ok */
+  case OK;
+  /* 500 / internal error */
+  case INTERNAL_ERROR;
+  /* 400 / bad request */
+  case BAD_REQUEST;
+  /* 401 / unauthorized */
+  case UNAUTHORIZED;
 };
 
 ?>
