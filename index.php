@@ -64,7 +64,12 @@ require_once(__DIR__ . '/frontend/' . "include.php");
     text-align: center;
   }
   
-  #login-dialog label, #login-dialog input, #login-dialog button {
+  #register-dialog label,
+  #register-dialog input,
+  #register-dialog button,  
+  #login-dialog label,
+  #login-dialog input,
+  #login-dialog button {
     display: block;
     margin-bottom: 8px;
     font-size: 14px;
@@ -72,11 +77,13 @@ require_once(__DIR__ . '/frontend/' . "include.php");
     box-sizing: border-box;
   }
   
+  #register-dialog > form > div,
   #login-dialog > form > div {
     display: flex;
     flex-direction: column
   }
   
+  #register-dialog input,
   #login-dialog input {
     padding: 10px;
       
@@ -86,6 +93,7 @@ require_once(__DIR__ . '/frontend/' . "include.php");
     border-color: #ccc;
   }
 
+  #register-dialog button,
   #login-dialog button {
     padding: 12px;
     margin: 8px 0;
@@ -98,14 +106,14 @@ require_once(__DIR__ . '/frontend/' . "include.php");
     cursor: pointer;
   }
 
+  #register-dialog button:hover,
   #login-dialog button:hover {
     background: var(--button-background-color-hover);
   }
+
   
   </style>  
   </head>
-  <body>
-    <header>
 <?php
   $viewModel = new ViewModel();
 
@@ -120,11 +128,11 @@ require_once(__DIR__ . '/frontend/' . "include.php");
   $itemsPerPage = 10;
   $numberOfPages = ceil($itemCount / $itemsPerPage);
 ?>
-
-      <div class="logo">
-        <a href="<?php echo AUTHORITY_WS_URL; ?>"><?php echo AUTHORITY_WS_TITLE;?></a>
-      </div>
-      <div></div>
+  <body>
+    <header>
+      <div class="logo"><a href="<?php echo AUTHORITY_WS_URL; ?>"><?php echo AUTHORITY_WS_TITLE;?></a></div>
+      <div class="dynamic-space"></div>
+      <button id="register-button" onclick="document.getElementById('register-dialog').style.display='block'">Register</button>
       <button id="login-button" onclick="document.getElementById('login-dialog').style.display='block'">Login</button>
     </header>
     <main id="middle-row">
@@ -205,22 +213,51 @@ require_once(__DIR__ . '/frontend/' . "include.php");
       </div>
       <div class="column-1"></div>
     </footer>
+    
+    <div id="register-dialog" class="modal-overlay">
+        <form class="modal-content animate" action="/register.php" method="post">
+          <h2>Register</h2>
+          <div>
+              <label for="username">Username</label>
+              <input type="text" name="username" id="username">
+          </div>
+          <div>
+              <label for="password">Password</label>
+              <input type="password" name="password" id="password">
+          </div>
+          <div>
+              <label for="email">Email</label>
+              <input type="email" name="email" id="email">
+          </div>
+          <section>
+              <button type="submit">Register</button>
+          </section>
+          <section>
+          Already registered? <a style="color: green" href="/login.php">Login here</a>
+          </section>
+        </form>
+    </div>  
+  
     <div id="login-dialog" class="modal-overlay">
         <form class="modal-content animate" action="/login.php" method="post">
           <h2>Login</h2>
           <div>
-              <label for="username">Username:</label>
+              <label for="username">Username</label>
               <input type="text" name="username" id="username">
           </div>
           <div>
-              <label for="password">Password:</label>
+              <label for="password">Password</label>
               <input type="password" name="password" id="password">
           </div>
           <section>
               <button type="submit">Login</button>
           </section>
+          <section>
+          Not registered? <a style="color: green" href="/register.php">Sign-up here</a>
+          </section>
         </form>
     </div>
+  
   </body>
 </html>
 

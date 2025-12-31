@@ -11,6 +11,10 @@ html, body {
   font-family: var(--font);
 }
 
+/* General styling for links. */
+a, a:visited, a:hover, a:active {
+  text-decoration: none;  
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
@@ -67,12 +71,14 @@ header {
   border-bottom-color: var(--border-color);
 }
 
-header > div:nth-child(2) {
+header > div.dynamic-space {
   flex-grow: 1;
 }
 
-header > #login-dialog {
-  display: none;
+header > button:not(:first-child),
+header > div:not(:first-child),
+header > a:not(:first-child) {
+  margin-left: 8px;
 }
 
 header > #login-button {
@@ -92,18 +98,12 @@ header > div.logo {
 }
 
 header > div.logo a {
-  text-decoration: none;
-  font-size: 32px; /*TODO: Do not use px.*/
+  font-size: 2rem;
 }
 
-header > div.logo a:visited {
-  text-decoration: none;
-}
-
-header > div.logo a:hover {
-  text-decoration: none;
-}
-
+header > div.logo a,
+header > div.logo a:visited,
+header > div.logo a:hover,
 header > div.logo a:active {
   text-decoration: none;
 }
