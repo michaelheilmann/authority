@@ -118,24 +118,18 @@ class OrganizationsHandler extends Handler {
         return new HTTPResponse(HTTPStatusCode::INTERNAL_ERROR, JSONData::encode(array()));
       }
     }
-    try {
-      $rows = mysqli_query($this->mysqli, "SELECT * FROM `organizations` ORDER BY `name` LIMIT " . $index . ", " . $count);
-      if ($rows === false) {
-        /* database failure or inconsistencies yield 500 / internal server error */
-        return new HTTPResponse(HTTPStatusCode::INTERNAL_ERROR, JSONData::encode(array()));
-      }
-      $persons = array();
-      while ($row = mysqli_fetch_assoc($rows)) {
-        $person = array('id' => $row['id'], 'unique-id' => $row['unique-id'], 'name' => $row['name']);
-        $persons[] = $person;
-      }
-      $response = array('numberOfElements' => $this->getCount($context), 'elements' => $persons);
-      return new HTTPResponse(HTTPStatusCode::OK, JSONData::encode($response));
-    } catch (HTTPException $e) {
-      throw $e;
-    } catch (Exception $e) {
-      throw new HTTPInternalErrorException($context);
+    $rows = mysqli_query($this->mysqli, "SELECT * FROM `organizations` ORDER BY `name` LIMIT " . $index . ", " . $count);
+    if ($rows === false) {
+      /* database failure or inconsistencies yield 500 / internal server error */
+      return new HTTPResponse(HTTPStatusCode::INTERNAL_ERROR, JSONData::encode(array()));
     }
+    $organizations = array();
+    while ($row = mysqli_fetch_assoc($rows)) {
+      $organization = array('id' => $row['id'], 'unique-id' => $row['unique-id'], 'name' => $row['name']);
+      $organizations[] = $organization;
+    }
+    $response = array('numberOfElements' => $this->getCount($context), 'elements' => $organizations);
+    return new HTTPResponse(HTTPStatusCode::OK, JSONData::encode($response));
   }
 
   /**
