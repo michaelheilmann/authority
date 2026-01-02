@@ -72,10 +72,10 @@ CREATE TABLE `tags` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tags_nodes`
+-- Table structure for table `tags-nodes`
 --
 
-CREATE TABLE `tags_nodes` (
+CREATE TABLE `tags-nodes` (
   `id` bigint(20) NOT NULL,
   `tag-id` bigint(20) NOT NULL,
   `node-id` bigint(20) NOT NULL
@@ -133,9 +133,9 @@ ALTER TABLE `tags`
   ADD UNIQUE KEY `name` (`name`);
 
 --
--- Indexes for table `tags_nodes`
+-- Indexes for table `tags-nodes`
 --
-ALTER TABLE `tags_nodes`
+ALTER TABLE `tags-nodes`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `tag-id` (`tag-id`,`node-id`);
 
@@ -181,9 +181,9 @@ ALTER TABLE `tags`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `tags_nodes`
+-- AUTO_INCREMENT for table `tags-nodes`
 --
-ALTER TABLE `tags_nodes`
+ALTER TABLE `tags-nodes`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
