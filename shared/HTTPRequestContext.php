@@ -41,6 +41,18 @@ class HTTPRequestContext {
    * @todo Should be JSONData.
    */
   public string|null $requestBody;
+  
+  public function toString() {
+    $msg = 'request method: ' . HTTPRequestMethod::toString($this->requestMethod) . '\n';
+    $msg = $msg . 'number of arguments: ' . count($this->requestArguments) . '\n';
+    $msg = $msg . '[\n';
+    foreach ($this->requestArguments as $k => $v) {
+      $msg = $msg . ' ' . $k . ' => ' . $v . ',\n';
+    }
+    $msg = $msg . '],\n';
+    $msg = $msg . 'request Body: ' . $this->requestBody;
+    return $msg;
+  }
 };
 
 ?>
