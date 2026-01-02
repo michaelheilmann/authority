@@ -6,12 +6,41 @@ require_once(__DIR__ . '/' . 'HTTPRequestMethod.php');
  * @brief Information on an HTTP request.
  */
 class HTTPRequestContext {
-  /** @brief The request method. If we failed to determine the request method then this is null. */
-  public HTTPRequestMethod|null $requestMethod;
-  /* @brief The request path. */
+  
+  public function __construct(HTTPRequestMethod $requestMethod, array $requestPath, array $requestArguments, string|null $requestBody) {
+    $this->requestMethod = $requestMethod;
+    $this->requestPath = $requestPath;
+    $this->requestArguments = $requestArguments;
+    $this->requestBody = $requestBody;
+  }
+  
+  /**
+   * @brief
+   * The request method.
+   */
+  public HTTPRequestMethod $requestMethod;
+  
+  /**
+   * @brief
+   * The request path.
+   */
   public array $requestPath;
-  /* @brief The request arguments. */
+  
+  /**
+   * @brief
+   * The request arguments.
+   * @detail
+   * Associative key/value array. Always empty for non-get requests.
+   */
   public array $requestArguments;
+  
+  /** 
+   * @brief
+   * The request body.
+   * null if there is no request body.
+   * @todo Should be JSONData.
+   */
+  public string|null $requestBody;
 };
 
 ?>
