@@ -169,12 +169,12 @@ function my_db_get_person_by_unique_id($dbc, $unique_id) {
 /// The IDs of the tags.
 /// @return MyError | boolean @a true on success. MyError object on failure
 function My_Db_setNodeTags($dbc, $nodeId, $tagIds) {
-  if (mysqli_query($dbc, "DELETE FROM `tags_nodes` WHERE `node-id`='" . $dbc->real_escape_string($nodeId) . "'") === false) {
+  if (mysqli_query($dbc, "DELETE FROM `tags-nodes` WHERE `node-id`='" . $dbc->real_escape_string($nodeId) . "'") === false) {
     My_error("unable to update tags for node.", "error code: " . $dbc->errno);
     return new MyError(__FILE__, __LINE__);
   }
   foreach ($tagIds as $tagId) {
-    if (mysqli_query($dbc, "INSERT INTO `tags_nodes` (`id`, `tag-id`, `node-id`) VALUES(NULL, '" . $dbc->real_escape_string($tagId) . "', '" . $dbc->real_escape_string($nodeId) . "')") === false) {
+    if (mysqli_query($dbc, "INSERT INTO `tags-nodes` (`id`, `tag-id`, `node-id`) VALUES(NULL, '" . $dbc->real_escape_string($tagId) . "', '" . $dbc->real_escape_string($nodeId) . "')") === false) {
       My_error("unable to update tags for node.", "error code: " . $dbc->errno);
       return new MyError(__FILE__, __LINE__);
     }
