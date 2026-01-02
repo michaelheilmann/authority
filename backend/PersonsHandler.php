@@ -157,7 +157,7 @@ class PersonsHandler extends Handler {
    }
    if ($rows->num_rows == 0) {
      /* entity not found yields 404 / not found */
-     return new HTTPResponse(HTTPStatuscode::NOT_FOUND, JSONData::encode(array()));
+     return new HTTPResponse(HTTPStatusCode::NOT_FOUND, JSONData::encode(array()));
    }
    $row = mysqli_fetch_assoc($rows);
    $result = array('id' => $row['id'], 'unique-id' => $row['unique-id'], 'prename' => $row['prename'], 'surname' => $row['surname']);
@@ -205,4 +205,3 @@ class PersonsHandler extends Handler {
 } // class PersonsHandler
 
 ?>
-
