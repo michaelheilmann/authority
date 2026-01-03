@@ -165,31 +165,31 @@ class OrganizationsHandler extends Handler {
   }
 
   /**@override*/
-  public function dispatch(HTTPRequestContext $context, $requestPathParts, HTTPRequestMethod $requestMethod, $arguments) : HTTPResponse|null {
+  public function dispatch(HTTPRequestContext $context) : HTTPResponse|null {
     try {
-      if ($requestMethod !== HTTPRequestMethod::Get) {
+      if ($context->requestMethod !== HTTPRequestMethod::Get) {
         return null;
       }
       // persons
-      if (count($requestPathParts) == 1) {
-        if ($requestPathParts[0] == 'organizations') {      
-          $numberOfArguments = count($arguments);
+      if (count($context->requestPath) == 1) {
+        if ($context->requestPath[0] == 'organizations') {      
+          $numberOfArguments = count($context->requestArguments);
           if ($numberOfArguments == 0) {
             return $this->findAll($context, 0, $this->getCount($context));
-          } else if (isset($arguments['index']) && isset($arguments['count']) && $numberOfArguments == 2) {
-            return $this->findAll($context, toInt($arguments['index']), toInt($arguments['count']));
+          } else if (isset($context->requestArguments['index']) && isset($context->requestArguments['count']) && $numberOfArguments == 2) {
+            return $this->findAll($context, toInt($context->requestArguments['index']), toInt($context->requestArguments['count']));
           }
         } 
-      } else if (count($requestPathParts) == 2) {
-        if ($requestPathParts[0] == 'organizations') {      
-          $numberOfArguments = count($arguments);
+      } else if (count($context->requestPath) == 2) {
+        if ($context->requestPath[0] == 'organizations') {      
+          $numberOfArguments = count($context->requestArguments);
           if ($numberOfArguments == 0) {
-            return $this->find($context, $requestPathParts[1]);
+            return $this->find($context, $context->requestPath[1]);
           }
         } 
       } else if (count($requestPathParts) == 3) {
-        if ($requestPathParts[0] == 'organizations' && $requestPathParts[2] == 'tags') {      
-          $numberOfArguments = count($arguments);
+        if ($requestPathParts[0] == 'organizations' && $context->requestPath[2] == 'tags') {      
+          $numberOfArguments = count($context->requestArguments);
           if ($numberOfArguments == 0) {
             return $this->getTags($context, $requestPathParts[1]);
           }
