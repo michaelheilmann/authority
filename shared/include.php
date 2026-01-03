@@ -11,4 +11,6 @@ require_once(__DIR__ . '/' . 'HTTPStatusCode.php');
 require_once(__DIR__ . '/' . 'HTTPResponse.php');
 
 require_once(__DIR__ . '/' . 'JSONData.php');
+
+require_once(__DIR__ . '/' . 'Validator.php');
 ?>
