@@ -64,6 +64,15 @@ require_once(__DIR__ . '/frontend/' . "include.php");
     text-align: center;
   }
   
+  #registration-successful-dialog p, 
+  #register-dialog p,  
+  #login-dialog p {
+    color: black;
+  }
+  
+  #registration-successful-dialog label,
+  #registration-successful-dialog input,
+  #registration-successful-dialog button,  
   #register-dialog label,
   #register-dialog input,
   #register-dialog button,  
@@ -77,12 +86,14 @@ require_once(__DIR__ . '/frontend/' . "include.php");
     box-sizing: border-box;
   }
   
+  #registration-successful-dialog > form > div,
   #register-dialog > form > div,
   #login-dialog > form > div {
     display: flex;
     flex-direction: column
   }
   
+  #registration-successful-dialog input,
   #register-dialog input,
   #login-dialog input {
     padding: 10px;
@@ -92,7 +103,31 @@ require_once(__DIR__ . '/frontend/' . "include.php");
     border-style: solid;
     border-color: #ccc;
   }
+  
+  #register-dialog form div[data-id="global"],
+  #login-dialog form div[data-id="global"] {
+    display:none;
+  }
 
+  #register-dialog form.invalid div[data-id="global"],
+  #login-dialog form.invalid div[data-id="global"] {
+    display: block;
+    margin-bottom: 16px;
+    color: red;    
+  }
+
+  #registration-successful-dialog input.invalid,
+  #register-dialog input.invalid,
+  #login-dialog input.invalid {
+    padding: 10px;
+      
+    border-radius: 6px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--border-color-error);
+  }
+
+  #registration-successful-dialog button,
   #register-dialog button,
   #login-dialog button {
     padding: 12px;
@@ -106,9 +141,26 @@ require_once(__DIR__ . '/frontend/' . "include.php");
     cursor: pointer;
   }
 
+  #registration-successful-dialog button:hover,
   #register-dialog button:hover,
   #login-dialog button:hover {
     background: var(--button-background-color-hover);
+  }
+
+ 
+  #registration-successful-dialog input+[aria-live='polite'], 
+  #login-dialog input+[aria-live='polite'], 
+  #register-dialog input+[aria-live='polite'] {
+    color: red;
+    font-size: 12px;
+    display: none;
+    margin-bottom: 16px;
+  }
+
+  #registration-successful-dialog input+[aria-live='polite'],
+  #login-dialog input.invalid+[aria-live='polite'], 
+  #register-dialog input.invalid+[aria-live='polite'] {
+    display: block;
   }
 
   
@@ -214,49 +266,242 @@ require_once(__DIR__ . '/frontend/' . "include.php");
       <div class="column-1"></div>
     </footer>
     
+    <div id="registration-successful-dialog" class="modal-overlay">
+      <form class="modal-content animate">
+        <h2>Registration Successful</h2>
+        <div>
+            <p>Your registration was succesful. Please login to your account <a style="color: green" onclick="showLoginDialog()" href="#">here</a>.</p>
+        </div>
+        <section>
+            <button onclick="document.getElementById('registration-successful-dialog').style.display='none'">OK</button>
+        </section>
+      </form>
+    </div>
+
+    
     <div id="register-dialog" class="modal-overlay">
-        <form class="modal-content animate" action="/register.php" method="post">
-          <h2>Register</h2>
-          <div>
-              <label for="username">Username</label>
-              <input type="text" name="username" id="username">
-          </div>
-          <div>
-              <label for="password">Password</label>
-              <input type="password" name="password" id="password">
-          </div>
-          <div>
-              <label for="email">Email</label>
-              <input type="email" name="email" id="email">
-          </div>
-          <section>
-              <button type="submit">Register</button>
-          </section>
-          <section>
-          Already registered? <a style="color: green" href="/login.php">Login here</a>
-          </section>
-        </form>
-    </div>  
+      <form class="modal-content animate">
+        <h2>Register</h2>
+        <div aria-live="polite" data-id="global"></div>
+        <div>
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name" data-id="name">
+            <span aria-live="polite"></span>
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" data-id="password">
+            <span aria-live="polite"></span>
+        </div>
+        <div>
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" data-id="email">
+            <span aria-live="polite"></span>
+        </div>
+        <section>
+            <button type="submit">Register</button>
+        </section>
+        <section>
+        Already registered? <a style="color: green" onclick="showLoginDialog()" href="#">Login here</a>
+        </section>
+      </form>
+    </div>
+
+    <script>
+    
+      function showRegisterDialog() {
+        document.getElementById('registration-successful-dialog').style.display='none';
+        document.getElementById('register-dialog').style.display='block';
+        document.getElementById('login-dialog').style.display='none';
+      }
+            
+      function showRegistrationSuccesfulDialog() {
+        document.getElementById('registration-successful-dialog').style.display='block';
+        document.getElementById('register-dialog').style.display='none';
+        document.getElementById('login-dialog').style.display='none';
+      }
+      
+      function showLoginDialog() {
+        document.getElementById('registration-successful-dialog').style.display='none';
+        document.getElementById('register-dialog').style.display='none';
+        document.getElementById('login-dialog').style.display='block';
+      }
+    
+      // Handle form submission.
+      document.getElementById('register-dialog').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the form from refreshing the page
+        
+        let apiUrl = "<?php echo AUTHORITY_API_URL; ?>" + 'register';
+
+        // Capture the fields.
+        const dialogElement = document.getElementById('register-dialog');
+        const formElement = dialogElement.getElementsByTagName('form')[0];
+        const nameElement = dialogElement.querySelector('[data-id="name"]');
+        const passwordElement = dialogElement.querySelector('[data-id="password"]');
+        const emailElement = dialogElement.querySelector('[data-id="email"]');
+        const globalElement = dialogElement.querySelector('[data-id="global"]');
+        
+        fetch(apiUrl, {
+          method : 'POST',
+          body : JSON.stringify({ 'name' : nameElement.value,
+                                  'password' : passwordElement.value,
+                                  'email' : emailElement.value }) 
+        }).then((response) => {
+            if (!response.ok) {
+              const contentType = response.headers.get('Content-Type')
+              if (contentType && contentType.includes('application/json')) {
+                // return a rejected Promise that includes the JSON
+                return response.json().then((json) => Promise.reject(json))
+              } else {
+                throw new Error('invalid response')
+              }
+            }
+            const contentType = response.headers.get('Content-Type')
+            if (contentType && contentType.includes('application/json')) {
+              return response.json();
+            } else {
+              throw new Error('invalid response')
+            }
+          })
+          .then(data => {
+            formElement.classList.remove('invalid');
+            nameElement.classList.remove('invalid');
+            passwordElement.classList.remove('invalid');
+            emailElement.classList.remove('invalid');
+            
+            showRegistrationSuccesfulDialog();
+            
+            console.log(data);
+          })
+          .catch(error => {
+            var x;
+            
+            // (1) per-field error messages
+            x = error['field-errors'];
+            if (x.hasOwnProperty('name')) {
+              nameElement.classList.add('invalid');
+              nameElement.nextElementSibling.innerText = x['name'][0];
+            } else {
+              nameElement.classList.remove('invalid');
+            }
+            if (x.hasOwnProperty('password')) {
+              passwordElement.classList.add('invalid');
+              passwordElement.nextElementSibling.innerText = x['password'][0];
+            } else {
+              passwordElement.classList.remove('invalid');
+            }
+            if (x.hasOwnProperty('email')) {
+              emailElement.classList.add('invalid');
+              emailElement.nextElementSibling.innerText = x['email'][0];
+            } else {
+              emailElement.classList.remove('invalid');
+            }
+            
+            // (2) global error messsages
+            x = error['global-errors'];
+            if (x.length) {
+              formElement.classList.add('invalid');
+              globalElement.innerText = x[0];
+            } else {
+              formElement.classList.remove('invalid');
+            }
+          });       
+      });
+    </script>    
   
     <div id="login-dialog" class="modal-overlay">
-        <form class="modal-content animate" action="/login.php" method="post">
-          <h2>Login</h2>
-          <div>
-              <label for="username">Username</label>
-              <input type="text" name="username" id="username">
-          </div>
-          <div>
-              <label for="password">Password</label>
-              <input type="password" name="password" id="password">
-          </div>
-          <section>
-              <button type="submit">Login</button>
-          </section>
-          <section>
-          Not registered? <a style="color: green" href="/register.php">Register here</a>
-          </section>
-        </form>
+      <form class="modal-content animate" action="/login.php" method="post">
+        <h2>Login</h2>
+        <div aria-live="polite" data-id="global"></div>
+        <div>
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name" data-id="name">
+            <span aria-live="polite"></span>
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" data-id="password">
+            <span aria-live="polite"></span>
+        </div>
+        <section>
+            <button type="submit">Login</button>
+        </section>
+        <section>
+        Not registered? <a style="color: green" onclick="showRegisterDialog()" href="#">Register</a>
+        </section>
+      </form>
     </div>
+  
+    <script>
+      // Handle form submission.
+      document.getElementById('login-dialog').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the form from refreshing the page
+
+        let apiUrl = "<?php echo AUTHORITY_API_URL; ?>" + 'login';
+
+        // Capture the fields.
+        const dialogElement = document.getElementById('login-dialog');
+        const formElement = dialogElement.getElementsByTagName('form')[0];
+        const nameElement = dialogElement.querySelector('[data-id="name"]');
+        const passwordElement = dialogElement.querySelector('[data-id="password"]');
+        const globalElement = dialogElement.querySelector('[data-id="global"]');
+        
+        fetch(apiUrl, {
+          method : 'POST',
+          body : JSON.stringify({ 'name' : nameElement.value,
+                                  'password' : passwordElement.value }) 
+        }).then((response) => {
+            if (!response.ok) {
+              const contentType = response.headers.get('Content-Type')
+              if (contentType && contentType.includes('application/json')) {
+                // return a rejected Promise that includes the JSON
+                return response.json().then((json) => Promise.reject(json))
+              } else {
+                throw new Error('invalid response')
+              }
+            }
+            const contentType = response.headers.get('Content-Type')
+            if (contentType && contentType.includes('application/json')) {
+              return response.json();
+            } else {
+              throw new Error('invalid response')
+            }
+          })
+          .then(data => {
+            formElement.classList.remove('invalid');
+            nameElement.classList.remove('invalid');
+            passwordElement.classList.remove('invalid');
+            console.log(data);
+          })
+          .catch(error => {
+            var x;
+            
+            // (1) per-field error messages
+            x = error['field-errors'];
+            if (x.hasOwnProperty('name')) {
+              nameElement.classList.add('invalid');
+              nameElement.nextElementSibling.innerText = x['name'][0];
+            } else {
+              nameElement.classList.remove('invalid');
+            }
+            if (x.hasOwnProperty('password')) {
+              passwordElement.classList.add('invalid');
+              passwordElement.nextElementSibling.innerText = x['password'][0];
+            } else {
+              passwordElement.classList.remove('invalid');
+            }
+            
+            // (2) global error messages
+            x = error['global-errors'];
+            if (x.length) {
+              formElement.classList.add('invalid');
+              globalElement.innerText = x[0];
+            } else {
+              formElement.classList.remove('invalid');
+            }
+          });
+      });
+    </script>
   
   </body>
 </html>

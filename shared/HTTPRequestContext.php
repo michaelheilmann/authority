@@ -7,7 +7,7 @@ require_once(__DIR__ . '/' . 'HTTPRequestMethod.php');
  */
 class HTTPRequestContext {
   
-  public function __construct(HTTPRequestMethod $requestMethod, array $requestPath, array $requestArguments, string|null $requestBody) {
+  public function __construct(HTTPRequestMethod $requestMethod, array $requestPath, array $requestArguments, array|null $requestBody) {
     $this->requestMethod = $requestMethod;
     $this->requestPath = $requestPath;
     $this->requestArguments = $requestArguments;
@@ -38,9 +38,8 @@ class HTTPRequestContext {
    * @brief
    * The request body.
    * null if there is no request body.
-   * @todo Should be JSONData.
    */
-  public string|null $requestBody;
+  public array|null $requestBody;
   
   public function toString() {
     $msg = 'request method: ' . HTTPRequestMethod::toString($this->requestMethod) . '\n';

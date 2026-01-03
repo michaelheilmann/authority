@@ -61,14 +61,20 @@ function getRequestArguments() : array {
 
 /**
  * @brief Get the request body
- * @return The request body if they can be determined (string).
+ * @return array|null
+ * array if there is a valid request body.
  * null if there is no request body
- * @except null if we failed to determine the request arguments
+ * @except null if there is an invalid request body
  */
-function getRequestBody() : string|null {
+function getRequestBody() : array|null {
   $requestMethod = strtolower($_SERVER["REQUEST_METHOD"]);
   if ('put' === $requestMethod || 'patch' === $requestMethod || 'post' === $requestMethod) {
-    return file_get_contents("php://input");    
+    $contents = file_get_contents("php://input");
+    $contents = json_decode($contents, true);
+    if ($contents === false) {
+      throw new Error('invalid request body');
+    }
+    return $contents;
   } else {
     return null;
   }
@@ -120,6 +126,8 @@ function handleRequest() {
   $handlers = array();
   $handlers[] = new PersonsHandler();
   $handlers[] = new OrganizationsHandler();
+  $handlers[] = new LoginHandler();
+  $handlers[] = new RegisterHandler();
   try {
     foreach ($handlers as $handler) {
       $response = $handler->dispatch($context, $context->requestPath, $context->requestMethod, $context->requestArguments);
