@@ -7,9 +7,11 @@ class Validator {
   /// @param string $input The user password.
   /// @return bool true if valid. false if invalid.
   public static function validateUserPassword(string $input) : bool {
-    /// @remarks The current user password syntactic form is: at least 12 characters, alphabetic, alphanumeric, or numeric only.
-    return 1 === preg_match("/^[a-zA-Z0-9]{12,}$/", $input);
-    return false;
+    $uppercase = preg_match('@[A-Z]@', $input);
+    $lowercase = preg_match('@[a-z]@', $input);
+    $number    = preg_match('@[0-9]@', $input);
+    $special   = preg_match('@[^\w]@', $input);
+    return $uppercase && $lowercase && $number && $special;
   }
 
   /// Validate a user name.

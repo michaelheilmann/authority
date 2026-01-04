@@ -64,12 +64,13 @@ require_once(__DIR__ . '/frontend/' . "include.php");
     text-align: center;
   }
   
-  #register-dialog label,
-  #register-dialog input,
-  #register-dialog button,  
-  #login-dialog label,
-  #login-dialog input,
-  #login-dialog button {
+  .modal-overlay p {
+    color: black;
+  }
+  
+  .modal-overlay label,
+  .modal-overlay input,
+  .modal-overlay button {
     display: block;
     margin-bottom: 8px;
     font-size: 14px;
@@ -77,14 +78,12 @@ require_once(__DIR__ . '/frontend/' . "include.php");
     box-sizing: border-box;
   }
   
-  #register-dialog > form > div,
-  #login-dialog > form > div {
+  .modal-overlay > form > div {
     display: flex;
     flex-direction: column
   }
   
-  #register-dialog input,
-  #login-dialog input {
+  .modal-overlay input {
     padding: 10px;
       
     border-radius: 6px;
@@ -92,9 +91,27 @@ require_once(__DIR__ . '/frontend/' . "include.php");
     border-style: solid;
     border-color: #ccc;
   }
+  
+  .modal-overlay form div[data-id="global"] {
+    display:none;
+  }
 
-  #register-dialog button,
-  #login-dialog button {
+  .modal-overlay form.invalid div[data-id="global"] {
+    display: block;
+    margin-bottom: 16px;
+    color: red;    
+  }
+
+  .modal-overlay input.invalid {
+    padding: 10px;
+      
+    border-radius: 6px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--border-color-error);
+  }
+
+  .modal-overlay button {
     padding: 12px;
     margin: 8px 0;
     background: var(--button-background-color);
@@ -106,9 +123,19 @@ require_once(__DIR__ . '/frontend/' . "include.php");
     cursor: pointer;
   }
 
-  #register-dialog button:hover,
-  #login-dialog button:hover {
+  .modal-overlay button:hover {
     background: var(--button-background-color-hover);
+  }
+
+  .modal-overlay input+[aria-live='polite'] {
+    color: red;
+    font-size: 12px;
+    display: none;
+    margin-bottom: 16px;
+  }
+
+  .modal-overlay input+[aria-live='polite'] {
+    display: block;
   }
 
   
@@ -214,64 +241,296 @@ require_once(__DIR__ . '/frontend/' . "include.php");
       <div class="column-1"></div>
     </footer>
     
+    <div id="registration-successful-dialog" class="modal-overlay">
+      <form class="modal-content animate">
+        <h2>Registration Successful</h2>
+        <div>
+            <p>Your registration was succesful. Please login to your account <a style="color: green" onclick="dialogs.showDialog('login-dialog')" href="#">here</a>.</p>
+        </div>
+        <section>
+            <button onclick="document.getElementById('registration-successful-dialog').style.display='none'">OK</button>
+        </section>
+      </form>
+    </div>
+   
     <div id="register-dialog" class="modal-overlay">
-        <form class="modal-content animate" action="/register.php" method="post">
-          <h2>Register</h2>
-          <div>
-              <label for="username">Username</label>
-              <input type="text" name="username" id="username">
-          </div>
-          <div>
-              <label for="password">Password</label>
-              <input type="password" name="password" id="password">
-          </div>
-          <div>
-              <label for="email">Email</label>
-              <input type="email" name="email" id="email">
-          </div>
-          <section>
-              <button type="submit">Register</button>
-          </section>
-          <section>
-          Already registered? <a style="color: green" href="/login.php">Login here</a>
-          </section>
-        </form>
-    </div>  
+      <form class="modal-content animate">
+        <h2>Register</h2>
+        <div aria-live="polite" data-id="global"></div>
+        <div>
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name" data-id="name">
+            <span aria-live="polite"></span>
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" data-id="password">
+            <span aria-live="polite"></span>
+        </div>
+        <div>
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" data-id="email">
+            <span aria-live="polite"></span>
+        </div>
+        <section>
+            <button type="submit">Register</button>
+        </section>
+        <section>
+        Already registered? <a style="color: green" onclick="dialogs.showDialog('login-dialog')" href="#">Login here</a>
+        </section>
+      </form>
+    </div>
+
+    <script>
+    
+      var dialogs = {
+        
+        elementIDs : [
+          'registration-successful-dialog',
+          'register-dialog',
+          'login-successful-dialog',
+          'login-dialog',
+        ],
+        
+        onLoad : function() {
+          window.addEventListener('click', function(e) {
+            var modal = document.getElementById('login-dialog');
+            if (event.target == modal) {
+              modal.style.display = "none";
+            }
+          });
+
+          window.addEventListener('click', function(e) {
+            var modal = document.getElementById('register-dialog');
+            if (event.target == modal) {
+              modal.style.display = "none";
+            }
+          });
+
+          window.addEventListener('click', function(e) {
+            var modal = document.getElementById('registration-successful-dialog');
+            if (event.target == modal) {
+              modal.style.display = "none";
+            }
+          });
+
+          window.addEventListener('click', function(e) {
+            var modal = document.getElementById('login-successful-dialog');
+            if (event.target == modal) {
+              modal.style.display = "none";
+            }
+          });
+        },
+        
+        hideDialog : function(name) {
+            this.elementIDs.forEach((e) => {
+            if (e == name) {
+              document.getElementById(e).style.display = 'none';
+            }
+          });      
+        },
+        
+        showDialog : function(name) {
+          this.elementIDs.forEach((e) => {
+            if (e == name) {
+              document.getElementById(e).style.display = 'block';
+            } else {
+              document.getElementById(e).style.display = 'none';
+            }
+          });
+        },
+      };
+    
+      // Handle form submission.
+      document.getElementById('register-dialog').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the form from refreshing the page
+        
+        let apiUrl = "<?php echo AUTHORITY_API_URL; ?>" + 'register';
+
+        // Capture the fields.
+        const dialogElement = document.getElementById('register-dialog');
+        const formElement = dialogElement.getElementsByTagName('form')[0];
+        const nameElement = dialogElement.querySelector('[data-id="name"]');
+        const passwordElement = dialogElement.querySelector('[data-id="password"]');
+        const emailElement = dialogElement.querySelector('[data-id="email"]');
+        const globalElement = dialogElement.querySelector('[data-id="global"]');
+        
+        fetch(apiUrl, {
+          method : 'POST',
+          body : JSON.stringify({ 'name' : nameElement.value,
+                                  'password' : passwordElement.value,
+                                  'email' : emailElement.value }) 
+        }).then((response) => {
+            if (!response.ok) {
+              const contentType = response.headers.get('Content-Type')
+              if (contentType && contentType.includes('application/json')) {
+                // return a rejected Promise that includes the JSON
+                return response.json().then((json) => Promise.reject(json))
+              } else {
+                throw new Error('invalid response')
+              }
+            }
+            const contentType = response.headers.get('Content-Type')
+            if (contentType && contentType.includes('application/json')) {
+              return response.json();
+            } else {
+              throw new Error('invalid response')
+            }
+          })
+          .then(data => {
+            formElement.classList.remove('invalid');
+            nameElement.classList.remove('invalid');
+            passwordElement.classList.remove('invalid');
+            emailElement.classList.remove('invalid');
+            
+            dialogs.showDialog('registration-successful-dialog');
+          })
+          .catch(error => {
+            var x;
+            
+            // (1) per-field error messages
+            x = error['field-errors'];
+            if (x.hasOwnProperty('name')) {
+              nameElement.classList.add('invalid');
+              nameElement.nextElementSibling.innerText = x['name'][0];
+            } else {
+              nameElement.classList.remove('invalid');
+            }
+            if (x.hasOwnProperty('password')) {
+              passwordElement.classList.add('invalid');
+              passwordElement.nextElementSibling.innerText = x['password'][0];
+            } else {
+              passwordElement.classList.remove('invalid');
+            }
+            if (x.hasOwnProperty('email')) {
+              emailElement.classList.add('invalid');
+              emailElement.nextElementSibling.innerText = x['email'][0];
+            } else {
+              emailElement.classList.remove('invalid');
+            }
+            
+            // (2) global error messsages
+            x = error['global-errors'];
+            if (x.length) {
+              formElement.classList.add('invalid');
+              globalElement.innerText = x[0];
+            } else {
+              formElement.classList.remove('invalid');
+            }
+          });       
+      });
+    </script>
+
+    <div id="login-successful-dialog" class="modal-overlay">
+      <form class="modal-content animate">
+        <h2>Registration Successful</h2>
+        <div>
+            <p>Your login was succesful.</p>
+        </div>
+        <section>
+            <button onclick="document.getElementById('login-successful-dialog').style.display='none'">OK</button>
+        </section>
+      </form>
+    </div>
   
     <div id="login-dialog" class="modal-overlay">
-        <form class="modal-content animate" action="/login.php" method="post">
-          <h2>Login</h2>
-          <div>
-              <label for="username">Username</label>
-              <input type="text" name="username" id="username">
-          </div>
-          <div>
-              <label for="password">Password</label>
-              <input type="password" name="password" id="password">
-          </div>
-          <section>
-              <button type="submit">Login</button>
-          </section>
-          <section>
-          Not registered? <a style="color: green" href="/register.php">Register here</a>
-          </section>
-        </form>
+      <form class="modal-content animate" action="/login.php" method="post">
+        <h2>Login</h2>
+        <div aria-live="polite" data-id="global"></div>
+        <div>
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name" data-id="name">
+            <span aria-live="polite"></span>
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" data-id="password">
+            <span aria-live="polite"></span>
+        </div>
+        <section>
+            <button type="submit">Login</button>
+        </section>
+        <section>
+        Not registered? <a style="color: green" onclick="dialogs.showDialog('register-dialog')" href="#">Register</a>
+        </section>
+      </form>
     </div>
+  
+    <script>
+      // Handle form submission.
+      document.getElementById('login-dialog').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the form from refreshing the page
+
+        let apiUrl = "<?php echo AUTHORITY_API_URL; ?>" + 'login';
+
+        // Capture the fields.
+        const dialogElement = document.getElementById('login-dialog');
+        const formElement = dialogElement.getElementsByTagName('form')[0];
+        const nameElement = dialogElement.querySelector('[data-id="name"]');
+        const passwordElement = dialogElement.querySelector('[data-id="password"]');
+        const globalElement = dialogElement.querySelector('[data-id="global"]');
+        
+        fetch(apiUrl, {
+          method : 'POST',
+          body : JSON.stringify({ 'name' : nameElement.value,
+                                  'password' : passwordElement.value }) 
+        }).then((response) => {
+            if (!response.ok) {
+              const contentType = response.headers.get('Content-Type')
+              if (contentType && contentType.includes('application/json')) {
+                // return a rejected Promise that includes the JSON
+                return response.json().then((json) => Promise.reject(json))
+              } else {
+                throw new Error('invalid response')
+              }
+            }
+            const contentType = response.headers.get('Content-Type')
+            if (contentType && contentType.includes('application/json')) {
+              return response.json();
+            } else {
+              throw new Error('invalid response')
+            }
+          })
+          .then(data => {
+            formElement.classList.remove('invalid');
+            nameElement.classList.remove('invalid');
+            passwordElement.classList.remove('invalid');
+            
+            dialogs.showDialog('login-successful-dialog');
+          })
+          .catch(error => {
+            var x;
+            
+            // (1) per-field error messages
+            x = error['field-errors'];
+            if (x.hasOwnProperty('name')) {
+              nameElement.classList.add('invalid');
+              nameElement.nextElementSibling.innerText = x['name'][0];
+            } else {
+              nameElement.classList.remove('invalid');
+            }
+            if (x.hasOwnProperty('password')) {
+              passwordElement.classList.add('invalid');
+              passwordElement.nextElementSibling.innerText = x['password'][0];
+            } else {
+              passwordElement.classList.remove('invalid');
+            }
+            
+            // (2) global error messages
+            x = error['global-errors'];
+            if (x.length) {
+              formElement.classList.add('invalid');
+              globalElement.innerText = x[0];
+            } else {
+              formElement.classList.remove('invalid');
+            }
+          });
+      });
+    </script>
   
   </body>
 </html>
 
 <script>
-<?php
-// get the modal
-?>
-var modal = document.getElementById('login-dialog');
-<?php
-// when the user clicks anywhere outside of the modal, close it
-?>
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
-}
+dialogs.onLoad();
 </script>
