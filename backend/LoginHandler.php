@@ -96,7 +96,32 @@ class LoginHandler extends Handler {
         return new HTTPResponse(HTTPStatusCode::UNAUTHORIZED, JSONData::encode($emb->build()));
       }
       error_log("authorized", 0);
-      return new HTTPResponse(HTTPStatusCode::OK, JSONData::encode(array()));     
+      
+      $token = null;
+      {
+        $header =
+          json_encode([
+            "alg" => "HS256",
+            "typ" => "JWT"
+          ]);
+        $header = base64_encode($header);
+        
+        $payload =
+          json_encode([
+            "name" => $name
+          ]);
+        $payload = base64_encode($payload);
+        
+        /* @todo Of course do not hardcore this here. */
+        $secretKey = '24181b906ba750752a02336d5edc6414ee1e510b7f5261539a624fdd8e453481';
+
+        $signature = hash_hmac("sha256", $header . "." . $payload, $secretKey, true);
+        
+        $token = $header . "." . $payload . "." . $signature;
+      }
+      $data = JSONData::encode(array('name' => $name, 'token' => $token));
+      error_log("data: " . $data->getData(), 0);      
+      return new HTTPResponse(HTTPStatusCode::OK, $data);     
     } catch (Exception $e) {
      /* exceptions yield 500 / internal server error */
      error_log("internal server error: " . $e, 0);

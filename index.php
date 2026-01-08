@@ -3,6 +3,7 @@ ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 
+/* Include front-end specific code. */
 require_once(__DIR__ . '/frontend/' . "include.php");
 
 ?>
@@ -139,7 +140,33 @@ require_once(__DIR__ . '/frontend/' . "include.php");
   }
 
   
-  </style>  
+  </style>
+  <script>
+  // (1) Define namespace.
+  /// @description The 'authority' namespace.
+  var authority = authority || {};
+  
+  // (2) Define function.
+  /// @description Logout the user. That is, delete the token.
+  authority.logout = function () {
+    console.log("logging out user");
+  }
+  
+  // (3) Define function.
+  // @description Get the cookie of the specified name.
+  // @param name The specified name.
+  // @return The cookie if it was found. null otherwise.
+  authority.getCookieByName = function(name) {
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+      cookie = cookie.trim();
+      if (cookie.startsWith(name + '=')) {
+        return cookie.substring(name.length + 1);
+      }
+    }  
+    return null;      
+  }
+  </script>  
   </head>
 <?php
   $viewModel = new ViewModel();
@@ -159,8 +186,14 @@ require_once(__DIR__ . '/frontend/' . "include.php");
     <header>
       <div class="logo"><a href="<?php echo AUTHORITY_WS_URL; ?>"><?php echo AUTHORITY_WS_TITLE;?></a></div>
       <div class="dynamic-space"></div>
-      <button id="register-button" onclick="document.getElementById('register-dialog').style.display='block'">Register</button>
-      <button id="login-button" onclick="document.getElementById('login-dialog').style.display='block'">Login</button>
+      <?php
+      if (isset($_COOKIE['AuthorityAccessToken'])) {
+        echo '<button id="logout-button" onclick="authority.logout()">Logout</button>';
+      } else {
+        echo '<button id="register-button" onclick="authority.dialogs.showDialog(\'register-dialog\')">Register</button>';
+        echo '<button id="login-button" onclick="authority.dialogs.showDialog(\'login-dialog\')">Login</button>';
+      }
+      ?>
     </header>
     <main id="middle-row">
       <div class="column-2">
@@ -245,10 +278,10 @@ require_once(__DIR__ . '/frontend/' . "include.php");
       <form class="modal-content animate">
         <h2>Registration Successful</h2>
         <div>
-            <p>Your registration was succesful. Please login to your account <a style="color: green" onclick="dialogs.showDialog('login-dialog')" href="#">here</a>.</p>
+            <p>Your registration was succesful. Please login to your account <a style="color: green" onclick="authority.dialogs.showDialog('login-dialog')" href="#">here</a>.</p>
         </div>
         <section>
-            <button onclick="document.getElementById('registration-successful-dialog').style.display='none'">OK</button>
+            <button onclick="authority.dialogs.hideDialog('registration-successful-dialog')">OK</button>
         </section>
       </form>
     </div>
@@ -276,14 +309,14 @@ require_once(__DIR__ . '/frontend/' . "include.php");
             <button type="submit">Register</button>
         </section>
         <section>
-        Already registered? <a style="color: green" onclick="dialogs.showDialog('login-dialog')" href="#">Login here</a>
+        Already registered? <a style="color: green" onclick="authority.dialogs.showDialog('login-dialog')" href="#">Login here</a>
         </section>
       </form>
     </div>
 
     <script>
     
-      var dialogs = {
+      authority.dialogs = {
         
         elementIDs : [
           'registration-successful-dialog',
@@ -383,39 +416,47 @@ require_once(__DIR__ . '/frontend/' . "include.php");
             passwordElement.classList.remove('invalid');
             emailElement.classList.remove('invalid');
             
-            dialogs.showDialog('registration-successful-dialog');
+            authority.dialogs.showDialog('registration-successful-dialog');
           })
           .catch(error => {
-            var x;
-            
-            // (1) per-field error messages
-            x = error['field-errors'];
-            if (x.hasOwnProperty('name')) {
-              nameElement.classList.add('invalid');
-              nameElement.nextElementSibling.innerText = x['name'][0];
-            } else {
+            if (error instanceof Error) {
               nameElement.classList.remove('invalid');
-            }
-            if (x.hasOwnProperty('password')) {
-              passwordElement.classList.add('invalid');
-              passwordElement.nextElementSibling.innerText = x['password'][0];
-            } else {
-              passwordElement.classList.remove('invalid');
-            }
-            if (x.hasOwnProperty('email')) {
-              emailElement.classList.add('invalid');
-              emailElement.nextElementSibling.innerText = x['email'][0];
-            } else {
               emailElement.classList.remove('invalid');
-            }
-            
-            // (2) global error messsages
-            x = error['global-errors'];
-            if (x.length) {
-              formElement.classList.add('invalid');
-              globalElement.innerText = x[0];
-            } else {
               formElement.classList.remove('invalid');
+              formElement.classList.add('invalid');
+              globalElement.innerText = 'unknown error occurred';              
+            } else {
+              var x;
+              
+              // (1) per-field error messages
+              x = error['field-errors'];
+              if (x.hasOwnProperty('name')) {
+                nameElement.classList.add('invalid');
+                nameElement.nextElementSibling.innerText = x['name'][0];
+              } else {
+                nameElement.classList.remove('invalid');
+              }
+              if (x.hasOwnProperty('password')) {
+                passwordElement.classList.add('invalid');
+                passwordElement.nextElementSibling.innerText = x['password'][0];
+              } else {
+                passwordElement.classList.remove('invalid');
+              }
+              if (x.hasOwnProperty('email')) {
+                emailElement.classList.add('invalid');
+                emailElement.nextElementSibling.innerText = x['email'][0];
+              } else {
+                emailElement.classList.remove('invalid');
+              }
+              
+              // (2) global error messsages
+              x = error['global-errors'];
+              if (x.length) {
+                formElement.classList.add('invalid');
+                globalElement.innerText = x[0];
+              } else {
+                formElement.classList.remove('invalid');
+              }
             }
           });       
       });
@@ -423,12 +464,12 @@ require_once(__DIR__ . '/frontend/' . "include.php");
 
     <div id="login-successful-dialog" class="modal-overlay">
       <form class="modal-content animate">
-        <h2>Registration Successful</h2>
+        <h2>Login Successful</h2>
         <div>
             <p>Your login was succesful.</p>
         </div>
         <section>
-            <button onclick="document.getElementById('login-successful-dialog').style.display='none'">OK</button>
+            <button onclick="authority.dialogs.hideDialog('login-successful-dialog')">OK</button>
         </section>
       </form>
     </div>
@@ -451,13 +492,15 @@ require_once(__DIR__ . '/frontend/' . "include.php");
             <button type="submit">Login</button>
         </section>
         <section>
-        Not registered? <a style="color: green" onclick="dialogs.showDialog('register-dialog')" href="#">Register</a>
+        Not registered? <a style="color: green" onclick="authority.dialogs.showDialog('register-dialog')" href="#">Register</a>
         </section>
       </form>
     </div>
   
     <script>
       // Handle form submission.
+      
+      
       document.getElementById('login-dialog').addEventListener('submit', function(event) {
         event.preventDefault(); // Prevent the form from refreshing the page
 
@@ -496,33 +539,47 @@ require_once(__DIR__ . '/frontend/' . "include.php");
             nameElement.classList.remove('invalid');
             passwordElement.classList.remove('invalid');
             
-            dialogs.showDialog('login-successful-dialog');
+            /* @todo This is insecure. Do not emit crypto material to the JS console. */
+            console.log("storing cookie for `" + encodeURIComponent(data['name']) + "` `" + encodeURIComponent(data['token']) + "`");
+            /* @todo This is insecure. `SameSite=Strict` is already good. `Secure` is already good. */
+            document.cookie="AuthorityAccessToken=" + encodeURIComponent(data['token']) + "; SameSite=Strict; Secure;"
+            /* @tood This is insecure. Do not emit crypto material to the JS console. */
+            console.log("getting cookie `" + authority.getCookieByName('AuthorityAccessToken') + "`");
+            
+            authority.dialogs.showDialog('login-successful-dialog');
           })
           .catch(error => {
-            var x;
-            
-            // (1) per-field error messages
-            x = error['field-errors'];
-            if (x.hasOwnProperty('name')) {
-              nameElement.classList.add('invalid');
-              nameElement.nextElementSibling.innerText = x['name'][0];
-            } else {
+            if (error instanceof Error) {
               nameElement.classList.remove('invalid');
-            }
-            if (x.hasOwnProperty('password')) {
-              passwordElement.classList.add('invalid');
-              passwordElement.nextElementSibling.innerText = x['password'][0];
-            } else {
-              passwordElement.classList.remove('invalid');
-            }
-            
-            // (2) global error messages
-            x = error['global-errors'];
-            if (x.length) {
-              formElement.classList.add('invalid');
-              globalElement.innerText = x[0];
-            } else {
               formElement.classList.remove('invalid');
+              formElement.classList.add('invalid');
+              globalElement.innerText = 'unknown error occurred';              
+            } else {
+              var x;
+              
+              // (1) per-field error messages
+              x = error['field-errors'];
+              if (x.hasOwnProperty('name')) {
+                nameElement.classList.add('invalid');
+                nameElement.nextElementSibling.innerText = x['name'][0];
+              } else {
+                nameElement.classList.remove('invalid');
+              }
+              if (x.hasOwnProperty('password')) {
+                passwordElement.classList.add('invalid');
+                passwordElement.nextElementSibling.innerText = x['password'][0];
+              } else {
+                passwordElement.classList.remove('invalid');
+              }
+              
+              // (2) global error messages
+              x = error['global-errors'];
+              if (x.length) {
+                formElement.classList.add('invalid');
+                globalElement.innerText = x[0];
+              } else {
+                formElement.classList.remove('invalid');
+              }
             }
           });
       });
@@ -532,5 +589,5 @@ require_once(__DIR__ . '/frontend/' . "include.php");
 </html>
 
 <script>
-dialogs.onLoad();
+authority.dialogs.onLoad();
 </script>

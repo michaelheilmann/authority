@@ -75,13 +75,9 @@ header > div.dynamic-space {
   flex-grow: 1;
 }
 
-header > button:not(:first-child),
-header > div:not(:first-child),
-header > a:not(:first-child) {
-  margin-left: 8px;
-}
-
-header > #login-button {
+header > a,
+header > button,
+header > div {
   margin-right: var(--default-margin);
 }
 
